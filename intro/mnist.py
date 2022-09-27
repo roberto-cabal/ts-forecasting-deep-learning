@@ -23,3 +23,10 @@ class MnistModel(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return F.log_softmax(x)
+
+if __name__=='__main__':
+
+    net = MnistModel()
+
+    for name,layer in net.named_children():
+        print(f'{name}: {layer}')
