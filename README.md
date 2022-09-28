@@ -1,6 +1,8 @@
 # ts-forecasting-deep-learning
 I used this repo for training my self on Time Series Forecasting with PyTorch using the book "Time Series Forecasting using Deep Learning" by Ivan Gridin.
 
+![ts1](ts1.png)
+
 # Notes
 
 ## Improving neural networks performance
