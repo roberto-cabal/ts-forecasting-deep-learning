@@ -3,3 +3,5 @@ torch
 torchvision
 torchaudio
 torchviz
+sklearn
+matplotlib

@@ -1,3 +1,7 @@
+"""
+Inspired from 'Time Series Forecasting using Deep Learning' by Ivan Gridin CH2
+"""
+
 import torch.nn as nn
 import torch.nn.functional as F
 

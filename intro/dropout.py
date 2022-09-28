@@ -1,3 +1,7 @@
+"""
+Inspired from 'Time Series Forecasting using Deep Learning' by Ivan Gridin CH2
+"""
+
 import torch
 from torch.nn import Dropout
 torch.manual_seed(1)
