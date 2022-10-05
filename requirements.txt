@@ -32,13 +32,21 @@ numpy==1.23.3
     # via
     #   contourpy
     #   matplotlib
+    #   pandas
+    #   patsy
     #   scikit-learn
     #   scipy
+    #   statsmodels
     #   torchvision
 packaging==21.3
     # via
     #   build
     #   matplotlib
+    #   statsmodels
+pandas==1.5.0
+    # via statsmodels
+patsy==0.5.2
+    # via statsmodels
 pep517==0.13.0
     # via build
 pillow==9.2.0
@@ -52,16 +60,26 @@ pyparsing==3.0.9
     #   matplotlib
     #   packaging
 python-dateutil==2.8.2
-    # via matplotlib
+    # via
+    #   matplotlib
+    #   pandas
+pytz==2022.4
+    # via pandas
 requests==2.28.1
     # via torchvision
 scikit-learn==1.1.2
     # via sklearn
 scipy==1.9.1
-    # via scikit-learn
+    # via
+    #   scikit-learn
+    #   statsmodels
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   patsy
+    #   python-dateutil
 sklearn==0.0
+    # via -r requirements.in
+statsmodels==0.13.2
     # via -r requirements.in
 threadpoolctl==3.1.0
     # via scikit-learn
