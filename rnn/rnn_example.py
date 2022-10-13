@@ -70,26 +70,24 @@ for t in range(training_epochs):
               f'val: - {round(val_loss.item(), 4)}')
 
 # --- predict on test set
-best_model.eval()
-_, h_list = best_model(x_val)
-# warm hidden state
-h = (h_list[-1, :]).unsqueeze(-2)
+use_warm_up = False
+
+if use_warm_up:
+    best_model.eval()
+    _, h_list = best_model(x_val)
+    # warm hidden state
+    h = (h_list[-1, :]).unsqueeze(-2)
 
 predicted = []
 for test_seq in x_test.tolist():
     x = torch.Tensor(data = [test_seq])
     # passing hidden state through each iteration
-    y, h = best_model(x, h.unsqueeze(-2))
+    if use_warm_up:
+        y, h = best_model(x, h.unsqueeze(-2))
+    else:
+        y,_ = best_model(x)
     unscaled = scaler.inverse_transform(np.array(y.item()).reshape(-1, 1))[0][0]
     predicted.append(unscaled)
-
-real = scaler.inverse_transform(y_test.tolist())
-plt.title("Test dataset")
-plt.plot(real, label = 'real')
-plt.plot(predicted, label = 'predicted')
-plt.legend()
-plt.show()
-plt.savefig('rnn_test_predict.png')
 
 # --- training progress
 plt.title('Training')
@@ -101,3 +99,11 @@ plt.xlabel('Epoch')
 plt.legend()
 plt.show()
 plt.savefig('rnn_training_progress.png')
+
+real = scaler.inverse_transform(y_test.tolist())
+plt.title("Test dataset")
+plt.plot(real, label = 'real')
+plt.plot(predicted, label = 'predicted')
+plt.legend()
+plt.show()
+plt.savefig('rnn_test_predict.png')
