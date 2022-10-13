@@ -13,29 +13,30 @@ from get_data import *
 random.seed(1)
 torch.manual_seed(1)
 
-# parameters
+# --- parameters
 features = 240
 test_ts_len = 300
 rnn_hidden_size = 24
 learning_rate = 0.02
 training_epochs = 500
 
-# read data
+# --- read data
 ts = get_aep_timeseries()
 plt.title('AEP Hourly')
-plt.plot(ts[500:])
+plt.plot(ts[:500])
 plt.show()
 
-# scale data
+# --- scale data
 scaler = MinMaxScaler()
 scaled_ts = scaler.fit_transform(ts) # TODO: SPLIT BEFORE SCALE
-x_train, x_val, x_test, y_train, y_val, y_test = get_training_datasets(ts, features, test_ts_len)
+x_train, x_val, x_test, y_train, y_val, y_test = get_training_datasets(scaled_ts, features, test_ts_len)
+#import pdb; pdb.set_trace()
 
-# define model
+# --- define model
 model = RNN(hidden_size = rnn_hidden_size)
 model.train()
 
-# training
+# --- training
 optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 mse_loss = torch.nn.MSELoss()
 
@@ -46,22 +47,51 @@ training_loss = []
 validation_loss = []
 
 for t in range(training_epochs):
-    prediction,_ = model(x_train)
-    loss = mse_loss(prediction,y_train)
+
+    prediction, _ = model(x_train)
+    loss = mse_loss(prediction, y_train)
+
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-    val_prediction,_ = model(x_val)
-    val_loss = mse_loss(val_prediction,y_val)
+
+    val_prediction, _ = model(x_val)
+    val_loss = mse_loss(val_prediction, y_val)
+
     training_loss.append(loss.item())
     validation_loss.append(val_loss.item())
-    if val_loss.item()<min_val_loss:
+
+    if val_loss.item() < min_val_loss:
         best_model = copy.deepcopy(model)
         min_val_loss = val_loss.item()
-    if t%50==0:
-        print(f'epoch {t}: train - {round(loss.item(),4)}, val - {round(val_loss.item(),4)}')
 
-# training progress
+    if t % 50 == 0:
+        print(f'epoch {t}: train - {round(loss.item(), 4)}, '
+              f'val: - {round(val_loss.item(), 4)}')
+
+# --- predict on test set
+best_model.eval()
+_, h_list = best_model(x_val)
+# warm hidden state
+h = (h_list[-1, :]).unsqueeze(-2)
+
+predicted = []
+for test_seq in x_test.tolist():
+    x = torch.Tensor(data = [test_seq])
+    # passing hidden state through each iteration
+    y, h = best_model(x, h.unsqueeze(-2))
+    unscaled = scaler.inverse_transform(np.array(y.item()).reshape(-1, 1))[0][0]
+    predicted.append(unscaled)
+
+real = scaler.inverse_transform(y_test.tolist())
+plt.title("Test dataset")
+plt.plot(real, label = 'real')
+plt.plot(predicted, label = 'predicted')
+plt.legend()
+plt.show()
+plt.savefig('rnn_test_predict.png')
+
+# --- training progress
 plt.title('Training')
 plt.yscale('log')
 plt.plot(training_loss, label = 'training')

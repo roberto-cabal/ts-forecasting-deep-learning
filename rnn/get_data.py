@@ -11,8 +11,8 @@ load_dotenv(find_dotenv())
 
 def get_aep_timeseries():
     df = pd.read_csv(os.environ['PATH_TO_DATA']+'AEP_hourly.csv')
-    df['Datetime'] = pd.to_datetime(df['Datetime'])
-    df = df.sort_values(by='Datetime',ignore_index=True)
+    # df['Datetime'] = pd.to_datetime(df['Datetime'])
+    # df = df.sort_values(by='Datetime',ignore_index=True)
     ts = df['AEP_MW'].astype(int).values.reshape(-1, 1)[-3000:]
     return ts
 
