@@ -70,7 +70,7 @@ for t in range(training_epochs):
               f'val: - {round(val_loss.item(), 4)}')
 
 # --- predict on test set
-use_warm_up = False
+use_warm_up = True
 
 if use_warm_up:
     best_model.eval()
@@ -89,6 +89,9 @@ for test_seq in x_test.tolist():
     unscaled = scaler.inverse_transform(np.array(y.item()).reshape(-1, 1))[0][0]
     predicted.append(unscaled)
 
+real = scaler.inverse_transform(y_test.tolist()).reshape(-1)
+ms_error = np.mean((real-np.array(predicted))**2)
+
 # --- training progress
 plt.title('Training')
 plt.yscale('log')
@@ -98,12 +101,17 @@ plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend()
 plt.show()
-plt.savefig('rnn_training_progress.png')
+if use_warm_up:
+    plt.savefig('rnn_training_progress_warmup.png')
+else:
+    plt.savefig('rnn_training_progress.png')
 
-real = scaler.inverse_transform(y_test.tolist())
-plt.title("Test dataset")
+plt.title(f"Test dataset: MSE = {ms_error}")
 plt.plot(real, label = 'real')
 plt.plot(predicted, label = 'predicted')
 plt.legend()
 plt.show()
-plt.savefig('rnn_test_predict.png')
+if use_warm_up:
+    plt.savefig('rnn_test_predict_warmup.png')
+else:
+    plt.savefig('rnn_test_predict.png')
