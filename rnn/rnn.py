@@ -2,7 +2,6 @@
 Inspired from 'Time Series Forecasting using Deep Learning' by Ivan Gridin CH3
 """
 
-from turtle import forward
 import torch.nn as nn
 
 class RNN(nn.Module):
