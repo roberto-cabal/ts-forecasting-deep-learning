@@ -13,7 +13,7 @@ class GRU(nn.Module):
             hidden_size=hidden_size,
             batch_first=True
         )
-        self.fc = nn.Linear(hidden_size,out_size)
+        self.fn = nn.Linear(hidden_size,out_size)
 
     def forward(self,x,h=None):
         out,_ = self.gru(x,h)
