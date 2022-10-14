@@ -6,7 +6,7 @@ import sys
 import numpy as np
 import torch
 from sklearn.preprocessing import MinMaxScaler
-from gru import GRU
+from rnn import RNN
 from get_data import *
 
 # seed
@@ -16,7 +16,7 @@ torch.manual_seed(1)
 # --- parameters
 features = 240
 test_ts_len = 300
-gru_hidden_size = 24
+rnn_hidden_size = 1
 learning_rate = 0.02
 training_epochs = 500
 
@@ -33,7 +33,7 @@ x_train, x_val, x_test, y_train, y_val, y_test = get_training_datasets(scaled_ts
 #import pdb; pdb.set_trace()
 
 # --- define model
-model = GRU(hidden_size = gru_hidden_size)
+model = RNN(hidden_size = rnn_hidden_size)
 model.train()
 
 # --- training
