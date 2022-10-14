@@ -16,15 +16,15 @@ torch.manual_seed(1)
 # --- parameters
 features = 240
 test_ts_len = 300
-rnn_hidden_size = 24
+rnn_hidden_size = 1
 learning_rate = 0.02
 training_epochs = 500
 
 # --- read data
 ts = get_aep_timeseries()
-plt.title('AEP Hourly')
-plt.plot(ts[:500])
-plt.show()
+# plt.title('AEP Hourly')
+# plt.plot(ts[:500])
+# plt.show()
 
 # --- scale data
 scaler = MinMaxScaler()
@@ -93,6 +93,7 @@ real = scaler.inverse_transform(y_test.tolist()).reshape(-1)
 ms_error = np.mean((real-np.array(predicted))**2)
 
 # --- training progress
+plt.figure()
 plt.title('Training')
 plt.yscale('log')
 plt.plot(training_loss, label = 'training')
@@ -101,17 +102,12 @@ plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend()
 plt.show()
-if use_warm_up:
-    plt.savefig('rnn_training_progress_warmup.png')
-else:
-    plt.savefig('rnn_training_progress.png')
 
+plt.figure()
 plt.title(f"Test dataset: MSE = {ms_error}")
 plt.plot(real, label = 'real')
 plt.plot(predicted, label = 'predicted')
 plt.legend()
 plt.show()
-if use_warm_up:
-    plt.savefig('rnn_test_predict_warmup.png')
-else:
-    plt.savefig('rnn_test_predict.png')
+
+print(f'MSE = {ms_error}')
