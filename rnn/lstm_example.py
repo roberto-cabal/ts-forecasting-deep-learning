@@ -74,16 +74,17 @@ use_warm_up = True
 
 if use_warm_up:
     best_model.eval()
-    _, h_list = best_model(x_val)
-    # warm hidden state
-    h = (h_list[-1, :]).unsqueeze(-2)
+    with torch.no_grad():
+        _, h_list = best_model(x_val)
+        # warm hidden state
+        h = tuple([(h[-1,-1,:]).unsqueeze(-2).unsqueeze(-2) for h in h_list])
 
 predicted = []
 for test_seq in x_test.tolist():
     x = torch.Tensor(data = [test_seq])
-    # passing hidden state through each iteration
+    # passing hidden state and cell through each iteration
     if use_warm_up:
-        y, h = best_model(x, h.unsqueeze(-2))
+        y, h = best_model(x, h)
     else:
         y,_ = best_model(x)
     unscaled = scaler.inverse_transform(np.array(y.item()).reshape(-1, 1))[0][0]

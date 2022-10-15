@@ -22,7 +22,7 @@ class LSTM(nn.Module):
         self.fn = nn.Linear(hidden_size,out_size)
 
     def forward(self,x,h=None):
-        out,_ = self.lstm(x,h)
+        out,h = self.lstm(x,h)
         last_hidden_states = out[:,-1]
         out = self.fn(last_hidden_states)
-        return out,last_hidden_states
+        return out,h
